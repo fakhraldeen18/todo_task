@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuCheckboxItem
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   BellIcon,
   CircleUserIcon,
@@ -27,43 +27,48 @@ import {
   Share2,
   ShoppingCartIcon,
   UsersIcon
-} from "lucide-react"
-import { typeTodo } from "@/types/Index"
-import AddToDo from "@/components/AddToDo"
-import ToProgress from "@/components/ToProgress"
-import BackTodo from "@/components/BackTodo"
-import ToCompleted from "@/components/ToCompleted"
-import BackToProgress from "@/components/BackToProgress"
-import { motion } from "framer-motion"
+} from "lucide-react";
+import AddToDo from "@/components/AddToDo";
+import ToProgress from "@/components/ToProgress";
+import BackTodo from "@/components/BackTodo";
+import ToCompleted from "@/components/ToCompleted";
+import BackToProgress from "@/components/BackToProgress";
+import { motion } from "framer-motion";
+
 
 export default function Dashboard() {
-  const [todo, setTodo] = useState<typeTodo[]>([
+  const [todo, setTodo] = useState([
     { id: 1723467015875, title: "Buy groceries", description: "description" },
     { id: 1223467015875, title: "Read a book", description: "description" },
     { id: 1323467015875, title: "Go for a walk", description: "description" }
-  ])
-  const [progress, setProgress] = useState<typeTodo[]>([
+  ]);
+  
+  const [progress, setProgress] = useState([
     { id: 1723467015873, title: "Walk the dog", description: "description" }
-  ])
-  const [completed, setCompleted] = useState<typeTodo[]>([
+  ]);
+  
+  const [completed, setCompleted] = useState([
     { id: 1723467015883, title: "Refactor codebase", description: "Completed last week" }
-  ])
+  ]);
+  
   const [cards, setCards] = useState({
     todo,
     progress,
     completed
-  })
-
-  // if you want to use useEffect make sure you delete all mocks data from states ([todo, setTodo] ,[progress, setProgress], and [completed, setCompleted] )
-
+  });
+  
+  // if you want to use useEffect make sure you delete all mocks data from states ([todo, setTodo] ,[progress, setProgress], and [completed, setCompleted])
+  
   // useEffect(() => {
-  //   const storedCards = JSON.parse(localStorage.getItem("cards") || "[]")
-  //   console.log("storedCards:", storedCards)
-  //   setCards(storedCards)
-  // }, [])
+  //   const storedCards = JSON.parse(localStorage.getItem("cards") || "[]");
+  //   console.log("storedCards:", storedCards);
+  //   setCards(storedCards);
+  // }, []);
+  
   // useEffect(() => {
-  //   localStorage.setItem("cards", JSON.stringify(cards))
-  // }, [cards])
+  //   localStorage.setItem("cards", JSON.stringify(cards));
+  // }, [cards]);
+  
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
