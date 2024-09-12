@@ -43,6 +43,7 @@ import api from "@/api"
 import { useQuery } from "@tanstack/react-query"
 import ToDoCard from "@/components/ToDoCard"
 import InProgressCard from "@/components/InProgressCard"
+import CompletedCard from "@/components/CompletedCard"
 
 export default function Dashboard() {
   const [todo, setTodo] = useState([
@@ -281,6 +282,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <ToDoCard />
             <InProgressCard/>
+            <CompletedCard/>
             {/* <Card className="bg-[#F5F5F5]">
               <CardHeader className=" flex-row">
                 <h2 className="text-lg font-semibold mb-4">
@@ -329,7 +331,7 @@ export default function Dashboard() {
                 ))}
               </CardContent>
             </Card> */}
-            <Card className="bg-[#F5F5F5]">
+            {/* <Card className="bg-[#F5F5F5]">
               <CardHeader className=" flex-row">
                 <h2 className="text-lg font-semibold mb-4">
                   Completed
@@ -364,7 +366,7 @@ export default function Dashboard() {
                   </ul>
                 ))}
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </main>
       </div>
