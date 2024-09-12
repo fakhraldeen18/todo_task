@@ -14,13 +14,17 @@ import {
   DropdownMenuCheckboxItem
 } from "@/components/ui/dropdown-menu"
 import {
+  ArrowRightIcon,
   BellIcon,
+  CalendarDaysIcon,
   CircleUserIcon,
+  ClipboardListIcon,
   ClockIcon,
   FilterIcon,
   HomeIcon,
   LineChartIcon,
   MenuIcon,
+  MoreHorizontal,
   Package2Icon,
   PackageIcon,
   SearchIcon,
@@ -28,13 +32,16 @@ import {
   ShoppingCartIcon,
   UsersIcon
 } from "lucide-react"
-import { typeTodo } from "@/types/Index"
+import { TypeTodo, typeTodo } from "@/types/Index"
 import AddToDo from "@/components/AddToDo"
 import ToProgress from "@/components/ToProgress"
 import BackTodo from "@/components/BackTodo"
 import ToCompleted from "@/components/ToCompleted"
 import BackToProgress from "@/components/BackToProgress"
 import { motion } from "framer-motion"
+import api from "@/api"
+import { useQuery } from "@tanstack/react-query"
+import ToDoCard from "@/components/ToDoCard"
 
 export default function Dashboard() {
   const [todo, setTodo] = useState<typeTodo[]>([
@@ -42,29 +49,21 @@ export default function Dashboard() {
     { id: 1223467015875, title: "Read a book", description: "description" },
     { id: 1323467015875, title: "Go for a walk", description: "description" }
   ])
+
   const [progress, setProgress] = useState<typeTodo[]>([
     { id: 1723467015873, title: "Walk the dog", description: "description" }
   ])
   const [completed, setCompleted] = useState<typeTodo[]>([
     { id: 1723467015883, title: "Refactor codebase", description: "Completed last week" }
   ])
+
   const [cards, setCards] = useState({
     todo,
     progress,
     completed
   })
 
-  // if you want to use useEffect make sure you delete all mocks data from states ([todo, setTodo] ,[progress, setProgress], and [completed, setCompleted] )
-
-  // useEffect(() => {
-  //   const storedCards = JSON.parse(localStorage.getItem("cards") || "[]")
-  //   console.log("storedCards:", storedCards)
-  //   setCards(storedCards)
-  // }, [])
-  // useEffect(() => {
-  //   localStorage.setItem("cards", JSON.stringify(cards))
-  // }, [cards])
-
+  
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -284,50 +283,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="bg-[#F5F5F5]">
-              <CardHeader className=" flex-row">
-                <h2 className="text-lg font-semibold mb-4">
-                  To Do
-                  <Badge className="ml-1 h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                    {cards.todo.length}
-                  </Badge>
-                </h2>
-                <Button size="icon" className="ml-auto h-8 w-8">
-                  <span className="w-full ml-2">
-                    <AddToDo todo={todo} setTodo={setTodo} cards={cards} setCards={setCards} />
-                  </span>
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <div className="my-0.5 h-0.5 w-full  bg-[#2563eb] opacity-100 -mt-5 mb-8"></div>
-                {cards.todo.map((toDo) => (
-                  <ul key={toDo.id} className="space-y-2">
-                    <motion.li
-                      layout
-                      layoutId={toDo.id.toString()}
-                      draggable="true"
-                      className="bg-background rounded-md p-2 flex items-center justify-between mb-2 cursor-grab active:cursor-grabbing"
-                    >
-                      <div>
-                        <h3 className="font-medium">{toDo.title}</h3>
-                        <p className="text-sm text-muted-foreground">{toDo.description}</p>
-                      </div>
-                      <div className="flex items-center justify-between ">
-                        <ToProgress
-                          todo={todo}
-                          setTodo={setTodo}
-                          progress={progress}
-                          setProgress={setProgress}
-                          id={toDo.id}
-                          cards={cards}
-                          setCards={setCards}
-                        />
-                      </div>
-                    </motion.li>
-                  </ul>
-                ))}
-              </CardContent>
-            </Card>
+           <ToDoCard/>
             <Card className="bg-[#F5F5F5]">
               <CardHeader className=" flex-row">
                 <h2 className="text-lg font-semibold mb-4">

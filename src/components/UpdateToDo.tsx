@@ -1,106 +1,117 @@
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { ChangeEvent, FormEvent, useState } from "react"
-import { Dialog } from "@radix-ui/react-dialog"
-import { DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { CalendarIcon, PlusCircle } from "lucide-react"
-import { Calendar } from "./ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { Button } from "./ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "./ui/dialog"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
-import api from "@/api"
+import { Textarea } from "./ui/textarea"
+import { Calendar } from "./ui/calendar"
+import { TypeTodo } from "@/types/Index"
 import { useQueryClient } from "@tanstack/react-query"
-export default function AddToDo() {
-  const [createAt, setCreateAt] = useState<Date>(new Date())
-  const [endDate, setEndDate] = useState<Date>(new Date())
-  const [newTodo, setNewTodo] = useState({
-    userId: "53e3f50e-36c9-468e-85e2-b6983fef224e",
-    title: "",
-    description: "",
-    status: 0,
-    createdAt: format(createAt, "yyyy-MM-dd"),
-    endDate: format(endDate, "yyyy-MM-dd")
-  })
-  const queryClient = useQueryClient()
+import { ChangeEvent, FormEvent, useState } from "react"
+import { format } from "date-fns"
 
-  const handleCreateAtDateSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      // Normalize the date by setting it to midday to avoid timezone issues
-      const normalizedDate = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate(),
-        12,
-        0,
-        0 // Set time to noon to avoid timezone issues
-      )
-      setCreateAt(normalizedDate)
-      setNewTodo({
-        ...newTodo,
-        createdAt: format(normalizedDate, "yyyy-MM-dd")
-      })
-    }
-  }
-  const handleEndDateSelect = (selectedDate: Date | undefined) => {
-    if (selectedDate) {
-      // Normalize the date by setting it to midday to avoid timezone issues
-      const normalizedDate = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate(),
-        12,
-        0,
-        0 // Set time to noon to avoid timezone issues
-      )
-      setEndDate(normalizedDate)
-      setNewTodo({
-        ...newTodo,
-        endDate: format(normalizedDate, "yyyy-MM-dd")
-      })
-    }
-  }
-  const AddToDos = async () => {
+import api from "@/api"
+import { cn } from "@/lib/utils"
+
+export default function UpdateToDo({ todo }: { todo: TypeTodo }) {
+  const queryClient = useQueryClient()
+  const [updatedTodo, setUpdatedTodo] = useState({
+    title: todo.title,
+    description: todo.description,
+    status: 0,
+    createdAt: todo.createdAt,
+    endDate: todo.endDate
+  })
+  const [createAt, setCreateAt] = useState<Date>(new Date(todo.createdAt))
+  const [endDate, setEndDate] = useState<Date>(new Date(todo.endDate))
+
+  const updateTodo = async () => {
     try {
-      const res = await api.post("/todos", newTodo)
+      const res = await api.patch(`/todos/${todo.id}`, updatedTodo)
       return res.data
     } catch (error) {
-      console.error(error)
       return Promise.reject(new Error("Something went wrong"))
     }
   }
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    await AddToDos()
-    console.log("newTodo:", newTodo)
-    queryClient.invalidateQueries({ queryKey: ["todos"] })
-  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setNewTodo({ ...newTodo, [name]: value })
+    const { value, name } = e.target
+    setUpdatedTodo({
+      ...updatedTodo,
+      [name]: value
+    })
   }
   const handleChangeTextArea = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const { value } = e.target
-    setNewTodo({
-      ...newTodo,
+    setUpdatedTodo({
+      ...updatedTodo,
       description: value
     })
   }
+
+  const handleCreateAtDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      const normalizedDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        12,
+        0,
+        0
+      )
+      setCreateAt(normalizedDate)
+      setUpdatedTodo({
+        ...updatedTodo,
+        createdAt: normalizedDate // Set the correct property
+      })
+    }
+  }
+
+  const handleEndDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      const normalizedDate = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        12,
+        0,
+        0
+      )
+      setEndDate(normalizedDate)
+      setUpdatedTodo({
+        ...updatedTodo,
+        endDate: normalizedDate // Set the correct property
+      })
+    }
+  }
+
+  const handleUpdate = async (e: FormEvent) => {
+    e.preventDefault()
+    await updateTodo()
+    queryClient.invalidateQueries({ queryKey: ["todos"] })
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <span>
-          <PlusCircle className="h-3.5 w-3.5" />
-        </span>
+        <Button variant="ghost" className=" w-full flex-row justify-start">
+          Edit
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[325px] md:max-w-[550px]">
         <DialogHeader>
-          <DialogTitle className=" text-center">Add New Todo</DialogTitle>
+          <DialogTitle className=" text-center">Update Todo</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleUpdate}>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="block mb-2 font-medium" htmlFor="title">
                 Title
@@ -111,6 +122,7 @@ export default function AddToDo() {
                 placeholder="Enter the Todo title"
                 type="text"
                 className="col-span-3 h-40rounded-lg"
+                defaultValue={todo.title}
                 onChange={handleChange}
               />
             </div>
@@ -125,13 +137,14 @@ export default function AddToDo() {
                 rows={4}
                 className="col-span-3 h-40rounded-lg"
                 onChange={handleChangeTextArea}
+                defaultValue={todo.description}
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="block mb-2 font-medium" htmlFor="createdAt">
                 create Date
               </Label>
-              <Popover>
+              {/* <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     variant={"outline"}
@@ -151,6 +164,28 @@ export default function AddToDo() {
                     onSelect={handleCreateAtDateSelect}
                     initialFocus
                   />
+                </PopoverContent>
+              </Popover> */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !createAt && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {createAt ? format(createAt, "PPP") : <span>Pick a date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto p-0 pointer-events-auto z-50"
+                  align="start"
+                  side="bottom"
+                  onClick={(e) => e.stopPropagation()} // Stop event bubbling
+                >
+                  <Calendar mode="single" selected={createAt} onSelect={handleCreateAtDateSelect} />
                 </PopoverContent>
               </Popover>
             </div>
